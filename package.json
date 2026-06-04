@@ -1,0 +1,12 @@
+{
+  "name": "volley-note-pro",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "python -m http.server 5173 --bind 127.0.0.1"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.4",
+    "stripe": "^16.12.0"
+  }
+}

@@ -1,0 +1,1347 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Volley Note Pro</title>
+    <meta name="theme-color" content="#14564f" />
+    <meta name="application-name" content="Volley Note Pro" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Volley Note Pro" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="icons/icon-192.png" />
+    <style>
+      :root {
+        --bg: #f4f0e8;
+        --ink: #16242b;
+        --muted: #65747d;
+        --panel: #ffffff;
+        --line: #d7ddd8;
+        --green: #21776d;
+        --green-dark: #14564f;
+        --red: #b94d3e;
+        --gold: #e3b84e;
+        --blue: #2d6f9f;
+        --soft: #f2f8f5;
+        --shadow: 0 18px 42px rgba(22, 36, 43, 0.12);
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      }
+      button, input, select, textarea { font: inherit; }
+      button { cursor: pointer; }
+      .hidden { display: none !important; }
+
+      .login {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+      .login-card {
+        width: min(940px, 100%);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        overflow: hidden;
+        border-radius: 8px;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+      .hero {
+        position: relative;
+        min-height: 480px;
+        padding: 34px;
+        background:
+          linear-gradient(90deg, rgba(255,255,255,.18) 1px, transparent 1px) 0 0 / 16.66% 100%,
+          linear-gradient(rgba(255,255,255,.16) 1px, transparent 1px) 0 0 / 100% 33.33%,
+          linear-gradient(135deg, #2b9489, #195d56);
+        color: #fff;
+      }
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: 28px;
+        border: 3px solid rgba(255,255,255,.82);
+      }
+      .hero-text { position: relative; z-index: 1; max-width: 360px; }
+      .hero h1 { margin: 10px 0 14px; font-size: clamp(2.5rem, 7vw, 5rem); line-height: .98; letter-spacing: 0; }
+      .hero p { margin: 0; line-height: 1.7; color: rgba(255,255,255,.86); }
+      .ball {
+        position: absolute;
+        right: 14%;
+        bottom: 18%;
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        background:
+          radial-gradient(circle at 36% 28%, #fff 0 18%, transparent 19%),
+          conic-gradient(from -30deg, #fff 0 24%, var(--gold) 0 47%, #fff 0 69%, var(--blue) 0 86%, #fff 0);
+        box-shadow: 0 24px 34px rgba(0,0,0,.25);
+      }
+      .login-form { padding: 34px; display: grid; align-content: center; gap: 14px; }
+
+      .app {
+        width: min(1280px, calc(100% - 28px));
+        margin: 0 auto;
+        padding: 16px 0 34px;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 16px;
+      }
+      .brand h1 { margin: 0; font-size: clamp(1.7rem, 4vw, 3rem); line-height: 1; }
+      .label {
+        margin: 0 0 6px;
+        color: var(--red);
+        font-size: .76rem;
+        font-weight: 900;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+      .team-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: 999px;
+        background: #fff7e7;
+        color: #7b5017;
+        padding: 7px 11px;
+        font-size: .82rem;
+        font-weight: 900;
+      }
+      .tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+      .tab, .primary, .secondary, .danger, .icon {
+        border: 0;
+        border-radius: 8px;
+        font-weight: 900;
+      }
+      .tab {
+        min-height: 39px;
+        padding: 0 13px;
+        background: #fff;
+        color: var(--muted);
+        border: 1px solid var(--line);
+      }
+      .tab.active { background: var(--green-dark); color: #fff; border-color: var(--green-dark); }
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        box-shadow: 0 8px 28px rgba(22,36,43,.07);
+      }
+      .view { display: none; }
+      .view.active { display: block; }
+      .grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 390px;
+        gap: 18px;
+        align-items: start;
+      }
+      .form, .side, .section { padding: 18px; }
+      .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+      .row h2, .row h3 { margin: 0; }
+      .fields {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 16px;
+      }
+      .memo-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        margin-top: 14px;
+      }
+      label, fieldset {
+        display: grid;
+        gap: 7px;
+        color: #35444d;
+        font-size: .9rem;
+        font-weight: 850;
+      }
+      input, select, textarea {
+        width: 100%;
+        border: 1px solid #cdd6d0;
+        border-radius: 8px;
+        background: #fbfcfa;
+        color: var(--ink);
+        padding: 10px 11px;
+      }
+      textarea { min-height: 104px; resize: vertical; line-height: 1.55; }
+      input:focus, select:focus, textarea:focus {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px rgba(45,111,159,.16);
+        outline: none;
+      }
+      input[type="range"] { padding: 0; accent-color: var(--green); }
+      .ratings {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        margin: 16px 0 0;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+      }
+      .ratings legend { padding: 0 8px; color: var(--muted); font-weight: 900; }
+      .score-readout { color: var(--muted); font-size: .8rem; font-weight: 800; }
+      .toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+      .primary, .secondary, .danger {
+        min-height: 42px;
+        padding: 0 15px;
+      }
+      .primary { background: var(--green-dark); color: #fff; }
+      .secondary { background: #eef4ef; color: var(--green-dark); }
+      .danger { background: #faeeee; color: #a93630; }
+      .icon {
+        display: inline-grid;
+        place-items: center;
+        width: 38px;
+        height: 38px;
+        background: #f2efe7;
+        color: var(--muted);
+      }
+      .summary {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 9px;
+      }
+      .metric {
+        display: grid;
+        min-height: 74px;
+        align-content: center;
+        border-radius: 8px;
+        background: var(--soft);
+        padding: 10px;
+      }
+      .metric strong { font-size: 1.35rem; line-height: 1.1; overflow-wrap: anywhere; }
+      .metric span { color: var(--muted); font-size: .76rem; font-weight: 850; }
+      .filters {
+        display: grid;
+        grid-template-columns: 1fr 140px;
+        gap: 10px;
+        margin: 16px 0;
+      }
+      .list { display: grid; gap: 12px; max-height: 670px; overflow: auto; padding-right: 2px; }
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 14px;
+      }
+      .card time { color: var(--muted); font-size: .82rem; font-weight: 850; }
+      .card h3 { margin: 3px 0 0; font-size: 1.04rem; }
+      .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+      .chip {
+        border-radius: 999px;
+        background: #edf5f3;
+        color: var(--green-dark);
+        padding: 5px 9px;
+        font-size: .77rem;
+        font-weight: 900;
+      }
+      .chip.alt { background: #fff3dc; color: #875418; }
+      .note-block { margin-top: 9px; }
+      .note-title { color: var(--muted); font-size: .76rem; font-weight: 900; }
+      .note-body { margin-top: 2px; color: #2d3940; line-height: 1.5; white-space: pre-wrap; }
+      .empty {
+        border: 1px dashed #b8c4bd;
+        border-radius: 8px;
+        padding: 22px;
+        color: var(--muted);
+        text-align: center;
+        line-height: 1.6;
+      }
+      .two-col {
+        display: grid;
+        grid-template-columns: 330px minmax(0, 1fr);
+        gap: 18px;
+      }
+      .calendar {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 7px;
+      }
+      .day-name { color: var(--muted); font-size: .75rem; font-weight: 900; text-align: center; }
+      .day {
+        min-height: 74px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+        padding: 7px;
+      }
+      .day.muted { opacity: .42; }
+      .day strong { font-size: .85rem; }
+      .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; background: var(--green); }
+      .dot.game { background: var(--red); }
+      canvas {
+        width: 100%;
+        min-height: 330px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+      }
+      .player-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+      }
+      .share-box {
+        min-height: 160px;
+        font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+        font-size: .82rem;
+      }
+      .status {
+        margin: 10px 0 0;
+        color: var(--muted);
+        font-size: .84rem;
+        font-weight: 850;
+        line-height: 1.5;
+      }
+      .status.ok { color: var(--green-dark); }
+      .status.error { color: var(--red); }
+      svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2; }
+
+      @media print {
+        body { background: #fff; }
+        .login, header, .tabs, .toolbar, .filters, .icon, .no-print { display: none !important; }
+        .app { width: 100%; padding: 0; }
+        .view { display: block !important; }
+        .panel { box-shadow: none; break-inside: avoid; }
+      }
+      @media (max-width: 980px) {
+        .login-card, .grid, .two-col { grid-template-columns: 1fr; }
+        .hero { min-height: 320px; }
+      }
+      @media (max-width: 720px) {
+        .app { width: min(100% - 18px, 1280px); padding-top: 10px; }
+        header { align-items: flex-start; flex-direction: column; }
+        .fields, .memo-grid, .ratings, .filters, .summary, .player-grid { grid-template-columns: 1fr; }
+        .form, .side, .section, .login-form, .hero { padding: 14px; }
+        .day { min-height: 58px; padding: 5px; }
+      }
+    </style>
+  </head>
+  <body>
+    <section class="login" id="loginScreen">
+      <div class="login-card">
+        <div class="hero">
+          <div class="hero-text">
+            <p class="label" style="color:#fff1c4">Volley Note Pro</p>
+            <h1>チームで育てる振り返り</h1>
+            <p>選手別の記録、カレンダー、成長グラフ、コーチコメント、出力とバックアップをまとめた公開版プロトタイプです。</p>
+          </div>
+          <div class="ball" aria-hidden="true"></div>
+        </div>
+        <form class="login-form" id="loginForm">
+          <div>
+            <p class="label">Team Login</p>
+            <h2 id="loginTitle">チームを作成 / ログイン</h2>
+            <p style="color:var(--muted);line-height:1.7">この端末内で使う簡易ログインです。本番公開ではSupabaseなどの認証に置き換えます。</p>
+          </div>
+          <label>チーム名 <input id="loginTeam" required placeholder="例: 青葉バレー部" /></label>
+          <label>パスワード <input id="loginPassword" type="password" required placeholder="チーム用パスワード" /></label>
+          <label>Supabase URL <input id="loginSupabaseUrl" placeholder="https://xxxx.supabase.co" /></label>
+          <label>Supabase anon key <input id="loginSupabaseKey" placeholder="公開 anon key" /></label>
+          <button class="primary" type="submit">はじめる</button>
+          <p id="loginMessage" style="margin:0;color:var(--red);font-weight:800"></p>
+        </form>
+      </div>
+    </section>
+
+    <main class="app hidden" id="app">
+      <header>
+        <div class="brand">
+          <p class="label">Volley Note Pro</p>
+          <h1>バレーボール振り返りノート</h1>
+        </div>
+        <div class="row">
+          <span class="team-pill" id="teamPill">Team</span>
+          <button class="primary hidden" id="installButton" type="button">アプリとして追加</button>
+          <button class="secondary" id="logoutButton" type="button">ログアウト</button>
+        </div>
+      </header>
+
+      <nav class="tabs" aria-label="画面切り替え">
+        <button class="tab active" data-view="dashboard" type="button">記録</button>
+        <button class="tab" data-view="players" type="button">選手</button>
+        <button class="tab" data-view="calendar" type="button">カレンダー</button>
+        <button class="tab" data-view="charts" type="button">成長グラフ</button>
+        <button class="tab" data-view="share" type="button">共有・出力</button>
+        <button class="tab" data-view="billing" type="button">料金・契約</button>
+      </nav>
+
+      <section class="view active" id="dashboard">
+        <div class="grid">
+          <form class="panel form" id="noteForm">
+            <div class="row">
+              <div>
+                <p class="label">New Log</p>
+                <h2>振り返りを記録</h2>
+              </div>
+              <button class="icon" type="button" id="resetForm" title="入力をクリア" aria-label="入力をクリア">
+                <svg viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M6 6l1 15h10l1-15"/></svg>
+              </button>
+            </div>
+            <input id="noteId" type="hidden" />
+            <div class="fields">
+              <label>選手 <select id="playerSelect" required></select></label>
+              <label>日付 <input id="date" type="date" required /></label>
+              <label>種別
+                <select id="type">
+                  <option>練習</option>
+                  <option>試合</option>
+                  <option>自主練</option>
+                  <option>トレーニング</option>
+                </select>
+              </label>
+              <label>ポジション
+                <select id="position">
+                  <option>未設定</option><option>OH</option><option>OP</option><option>MB</option><option>S</option><option>L</option><option>DS</option>
+                </select>
+              </label>
+            </div>
+            <fieldset class="ratings">
+              <legend>評価 0〜100%</legend>
+              <label>コンディション <input id="condition" type="range" min="0" max="100" value="60" /><span class="score-readout" id="conditionText">60%</span></label>
+              <label>サーブ <input id="serve" type="range" min="0" max="100" value="60" /><span class="score-readout" id="serveText">60%</span></label>
+              <label>レシーブ <input id="receive" type="range" min="0" max="100" value="60" /><span class="score-readout" id="receiveText">60%</span></label>
+              <label>トス <input id="set" type="range" min="0" max="100" value="60" /><span class="score-readout" id="setText">60%</span></label>
+              <label>スパイク <input id="spike" type="range" min="0" max="100" value="60" /><span class="score-readout" id="spikeText">60%</span></label>
+              <label>ブロック <input id="block" type="range" min="0" max="100" value="60" /><span class="score-readout" id="blockText">60%</span></label>
+            </fieldset>
+            <div class="memo-grid">
+              <label>できたこと <textarea id="good" placeholder="例: サーブを狙ったコースに打てた"></textarea></label>
+              <label>課題 <textarea id="issue" placeholder="例: 強いレシーブで面が上を向いた"></textarea></label>
+              <label>次に試すこと <textarea id="next" placeholder="例: 一歩目を小さくして面を先に作る"></textarea></label>
+            </div>
+            <label style="margin-top:14px">コーチコメント <textarea id="coachComment" placeholder="例: 次回はレシーブ前の構えを重点的に見よう"></textarea></label>
+            <label style="margin-top:14px">タグ <input id="tags" placeholder="サーブ, レシーブ, 試合前" /></label>
+            <div class="toolbar">
+              <button class="primary" type="submit">保存する</button>
+              <button class="secondary" type="button" id="sampleButton">サンプル入力</button>
+            </div>
+          </form>
+
+          <aside class="panel side">
+            <div class="summary">
+              <div class="metric"><strong id="countMetric">0</strong><span>記録</span></div>
+              <div class="metric"><strong id="avgMetric">-</strong><span>平均評価</span></div>
+              <div class="metric"><strong id="playerMetric">0</strong><span>選手</span></div>
+            </div>
+            <div class="filters">
+              <label>検索 <input id="search" type="search" placeholder="選手・課題・タグ" /></label>
+              <label>表示
+                <select id="filterType">
+                  <option value="all">すべて</option>
+                  <option>練習</option>
+                  <option>試合</option>
+                  <option>自主練</option>
+                  <option>トレーニング</option>
+                </select>
+              </label>
+            </div>
+            <div class="list" id="noteList"></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="view" id="players">
+        <div class="two-col">
+          <form class="panel section" id="playerForm">
+            <p class="label">Players</p>
+            <h2>選手を追加</h2>
+            <div class="fields" style="grid-template-columns:1fr">
+              <label>選手名 <input id="playerName" required placeholder="例: 田中 はる" /></label>
+              <label>背番号 <input id="playerNumber" placeholder="例: 7" /></label>
+              <label>ポジション <select id="playerPosition"><option>未設定</option><option>OH</option><option>OP</option><option>MB</option><option>S</option><option>L</option><option>DS</option></select></label>
+            </div>
+            <div class="toolbar"><button class="primary" type="submit">選手を保存</button></div>
+          </form>
+          <div class="panel section">
+            <div class="row"><h2>選手一覧</h2><span class="team-pill" id="playerCountPill">0人</span></div>
+            <div class="player-grid" id="playerCards" style="margin-top:14px"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="calendar">
+        <div class="two-col">
+          <div class="panel section">
+            <div class="row">
+              <button class="secondary" id="prevMonth" type="button">前月</button>
+              <h2 id="calendarTitle">Calendar</h2>
+              <button class="secondary" id="nextMonth" type="button">次月</button>
+            </div>
+            <div class="calendar" id="calendarGrid" style="margin-top:14px"></div>
+          </div>
+          <div class="panel section">
+            <h2>日付の記録</h2>
+            <div class="list" id="calendarList" style="margin-top:14px"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="charts">
+        <div class="panel section">
+          <div class="row">
+            <div>
+              <p class="label">Growth</p>
+              <h2>成長グラフ</h2>
+            </div>
+            <label style="max-width:260px">選手 <select id="chartPlayer"></select></label>
+          </div>
+          <canvas id="growthChart" width="980" height="380" style="margin-top:16px"></canvas>
+        </div>
+      </section>
+
+      <section class="view" id="share">
+        <div class="two-col">
+          <div class="panel section">
+            <p class="label">Export</p>
+            <h2>CSV / PDF / バックアップ</h2>
+            <div class="toolbar">
+              <button class="primary" id="csvButton" type="button">CSV出力</button>
+              <button class="secondary" id="pdfButton" type="button">PDF出力</button>
+              <button class="secondary" id="backupButton" type="button">バックアップJSON</button>
+            </div>
+            <label style="margin-top:16px">バックアップを復元 <input id="restoreFile" type="file" accept="application/json" /></label>
+          </div>
+          <div class="panel section">
+            <p class="label">Team Share</p>
+            <h2>招待リンク</h2>
+            <p style="color:var(--muted);line-height:1.7">Supabaseに招待コードを保存し、選手やコーチがリンクからチームへ参加できるようにします。</p>
+            <div class="fields" style="grid-template-columns:1fr 1fr">
+              <label>権限
+                <select id="inviteRole">
+                  <option value="player">選手</option>
+                  <option value="coach">コーチ</option>
+                </select>
+              </label>
+              <label>有効期限
+                <select id="inviteDays">
+                  <option value="7">7日</option>
+                  <option value="30">30日</option>
+                  <option value="90">90日</option>
+                </select>
+              </label>
+              <label style="grid-column:1 / -1">公開アプリURL
+                <input id="publicAppUrl" placeholder="https://your-domain.example/" />
+              </label>
+            </div>
+            <textarea class="share-box" id="shareText" readonly placeholder="招待リンクを作成するとここに表示されます。"></textarea>
+            <div class="toolbar">
+              <button class="primary" id="createInviteButton" type="button">招待リンクを作成</button>
+              <button class="secondary" id="copyShareButton" type="button">リンクをコピー</button>
+            </div>
+            <p class="status" id="inviteStatus">Supabase接続後に作成できます。</p>
+          </div>
+          <div class="panel section">
+            <p class="label">Supabase</p>
+            <h2>クラウド同期</h2>
+            <p style="color:var(--muted);line-height:1.7">SupabaseのURLとanon keyを入れると、チームデータをデータベースへ保存できます。</p>
+            <div class="fields" style="grid-template-columns:1fr">
+              <label>Supabase URL <input id="supabaseUrl" placeholder="https://xxxx.supabase.co" /></label>
+              <label>Supabase anon key <input id="supabaseKey" placeholder="公開 anon key" /></label>
+            </div>
+            <div class="toolbar">
+              <button class="primary" id="saveSupabaseButton" type="button">接続を保存</button>
+              <button class="secondary" id="pullSupabaseButton" type="button">クラウドから読み込み</button>
+              <button class="secondary" id="pushSupabaseButton" type="button">クラウドへ保存</button>
+            </div>
+            <p class="status" id="supabaseStatus">未接続</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="view" id="billing">
+        <div class="two-col">
+          <div class="panel section">
+            <p class="label">Pricing</p>
+            <h2>チームプラン</h2>
+            <div class="metric" style="margin-top:14px;min-height:110px">
+              <strong>月額 980円</strong>
+              <span>チーム記録、選手管理、カレンダー、成長グラフ、共有、CSV/PDF出力</span>
+            </div>
+            <div class="toolbar">
+              <button class="primary" id="checkoutButton" type="button">有料プランを開始</button>
+              <button class="secondary" id="portalButton" type="button">契約を管理</button>
+            </div>
+            <p class="status" id="billingStatus">Stripe設定後に利用できます。</p>
+          </div>
+          <div class="panel section">
+            <p class="label">Revenue Setup</p>
+            <h2>収益化に必要な設定</h2>
+            <div class="note-block"><div class="note-title">Vercel環境変数</div><div class="note-body">STRIPE_SECRET_KEY / STRIPE_PRICE_ID / STRIPE_WEBHOOK_SECRET / SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY / PUBLIC_APP_URL</div></div>
+            <div class="note-block"><div class="note-title">Stripe</div><div class="note-body">商品と月額価格を作成し、Price IDをVercelに設定します。</div></div>
+            <div class="note-block"><div class="note-title">Supabase</div><div class="note-body">支払い状態は volley_note_subscriptions に保存されます。</div></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const appVersion = "volley-note-pro-v1";
+      let deferredInstallPrompt = null;
+      const supabaseConfigKey = `${appVersion}:supabase`;
+      const publicUrlKey = `${appVersion}:public-url`;
+      const supabaseTable = "volley_note_team_states";
+      const supabaseInviteTable = "volley_note_invites";
+      const scoreFields = ["condition", "serve", "receive", "set", "spike", "block"];
+      const scoreLabels = { condition: "体調", serve: "サーブ", receive: "レシーブ", set: "トス", spike: "スパイク", block: "ブロック" };
+      const $ = (selector) => document.querySelector(selector);
+      const $$ = (selector) => [...document.querySelectorAll(selector)];
+      const state = { team: null, data: null, passwordHash: null, pendingInvite: null, cloud: loadSupabaseConfig(), calendarDate: new Date(), selectedCalendarDate: today() };
+      const fields = {};
+
+      function today() {
+        const now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+        return now.toISOString().slice(0, 10);
+      }
+      function slug(text) {
+        return text.trim().toLowerCase().replace(/\s+/g, "-") || "team";
+      }
+      function storeKey(team) { return `${appVersion}:${team}`; }
+      function loadSupabaseConfig() {
+        try {
+          const config = JSON.parse(localStorage.getItem(supabaseConfigKey)) || {};
+          return { url: config.url || "", key: config.key || "", enabled: Boolean(config.url && config.key), syncing: false };
+        } catch {
+          return { url: "", key: "", enabled: false, syncing: false };
+        }
+      }
+      function saveSupabaseConfig(url, key) {
+        state.cloud = { url: url.trim().replace(/\/+$/, ""), key: key.trim(), enabled: Boolean(url.trim() && key.trim()), syncing: false };
+        localStorage.setItem(supabaseConfigKey, JSON.stringify({ url: state.cloud.url, key: state.cloud.key }));
+      }
+      function clamp(value) { return Math.max(0, Math.min(100, Math.round(Number(value) || 0))); }
+      function makeId(prefix) { return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`; }
+      function avg(values) { return values.length ? values.reduce((sum, v) => sum + Number(v), 0) / values.length : 0; }
+      function score(note) { return avg(scoreFields.map((name) => note[name])); }
+      function playerName(id) { return state.data.players.find((p) => p.id === id)?.name || "未設定"; }
+      function escapeHtml(value) {
+        return String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" })[char]);
+      }
+      function download(name, content, type) {
+        const blob = new Blob([content], { type });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = name;
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }
+
+      async function hashText(text) {
+        if (!crypto.subtle) {
+          let hash = 0;
+          for (let i = 0; i < text.length; i++) {
+            hash = ((hash << 5) - hash) + text.charCodeAt(i);
+            hash |= 0;
+          }
+          return `fallback-${Math.abs(hash)}`;
+        }
+        const bytes = new TextEncoder().encode(text);
+        const hash = await crypto.subtle.digest("SHA-256", bytes);
+        return [...new Uint8Array(hash)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+      }
+      function defaultData(teamName, passwordHash) {
+        const playerId = makeId("player");
+        return {
+          teamName,
+          passwordHash,
+          players: [{ id: playerId, name: "サンプル選手", number: "7", position: "OH" }],
+          notes: [],
+          createdAt: new Date().toISOString(),
+        };
+      }
+      async function loadTeam(teamName, password) {
+        const passwordHash = await hashText(password);
+        const key = storeKey(slug(teamName));
+        if (state.cloud.enabled) {
+          const cloudData = await pullTeamFromSupabase(slug(teamName), passwordHash, { allowMissing: true });
+          if (cloudData) {
+            localStorage.setItem(key, JSON.stringify(cloudData));
+            return { team: slug(teamName), data: cloudData, passwordHash };
+          }
+        }
+        const saved = localStorage.getItem(key);
+        if (!saved) {
+          const data = defaultData(teamName.trim(), passwordHash);
+          localStorage.setItem(key, JSON.stringify(data));
+          if (state.cloud.enabled) await pushTeamToSupabase(slug(teamName), data, passwordHash);
+          return { team: slug(teamName), data, passwordHash };
+        }
+        const data = JSON.parse(saved);
+        if (!data.passwordHash && data.password) data.passwordHash = await hashText(data.password);
+        delete data.password;
+        if (data.passwordHash !== passwordHash) throw new Error("パスワードが違います。");
+        data.notes = data.notes.map(normalizeNote);
+        localStorage.setItem(key, JSON.stringify(data));
+        return { team: slug(teamName), data, passwordHash };
+      }
+      function persist(syncCloud = true) {
+        localStorage.setItem(storeKey(state.team), JSON.stringify(state.data));
+        if (syncCloud && state.cloud.enabled) {
+          pushTeamToSupabase(state.team, state.data, state.passwordHash).catch((error) => setSupabaseStatus(`自動同期に失敗しました: ${error.message}`, "error"));
+        }
+      }
+      function supabaseReady() {
+        return state.cloud.enabled && state.cloud.url && state.cloud.key;
+      }
+      function setSupabaseStatus(message, tone = "") {
+        const status = $("#supabaseStatus");
+        if (!status) return;
+        status.textContent = message;
+        status.className = `status ${tone}`.trim();
+      }
+      async function supabaseRequest(path, options = {}) {
+        if (!supabaseReady()) throw new Error("Supabase URLとanon keyを設定してください。");
+        const response = await fetch(`${state.cloud.url}/rest/v1/${path}`, {
+          ...options,
+          headers: {
+            apikey: state.cloud.key,
+            Authorization: `Bearer ${state.cloud.key}`,
+            "Content-Type": "application/json",
+            ...(options.headers || {}),
+          },
+        });
+        if (!response.ok) {
+          const text = await response.text();
+          throw new Error(text || `Supabase error ${response.status}`);
+        }
+        if (response.status === 204) return null;
+        return response.json();
+      }
+      async function fetchTeamState(teamSlug) {
+        const rows = await supabaseRequest(`${supabaseTable}?team_slug=eq.${encodeURIComponent(teamSlug)}&select=*`);
+        return rows[0] || null;
+      }
+      async function pullTeamFromSupabase(teamSlug, passwordHash, options = {}) {
+        const row = await fetchTeamState(teamSlug);
+        if (!row) {
+          if (options.allowMissing) return null;
+          throw new Error("クラウドにチームデータがありません。");
+        }
+        if (row.password_hash !== passwordHash) throw new Error("クラウド側のパスワードが違います。");
+        const data = row.data;
+        data.teamName = data.teamName || row.team_name;
+        data.passwordHash = passwordHash;
+        data.notes = (data.notes || []).map(normalizeNote);
+        data.players = data.players || [];
+        return data;
+      }
+      async function pullTeamByInvite(invite) {
+        const row = await fetchTeamState(invite.team_slug);
+        if (!row) throw new Error("招待先のチームデータがありません。");
+        const data = row.data;
+        data.teamName = data.teamName || row.team_name;
+        data.passwordHash = row.password_hash || data.passwordHash;
+        data.notes = (data.notes || []).map(normalizeNote);
+        data.players = data.players || [];
+        return { team: invite.team_slug, data, passwordHash: data.passwordHash };
+      }
+      async function pushTeamToSupabase(teamSlug, data, passwordHash) {
+        if (state.cloud.syncing) return;
+        state.cloud.syncing = true;
+        try {
+          const payload = {
+            team_slug: teamSlug,
+            team_name: data.teamName,
+            password_hash: passwordHash || data.passwordHash,
+            data: { ...data, password: undefined, passwordHash: passwordHash || data.passwordHash },
+            updated_at: new Date().toISOString(),
+          };
+          await supabaseRequest(supabaseTable, {
+            method: "POST",
+            headers: { Prefer: "resolution=merge-duplicates,return=minimal" },
+            body: JSON.stringify(payload),
+          });
+          setSupabaseStatus(`同期済み: ${new Date().toLocaleTimeString()}`, "ok");
+        } finally {
+          state.cloud.syncing = false;
+        }
+      }
+      async function saveSupabaseFromForm() {
+        saveSupabaseConfig($("#supabaseUrl").value, $("#supabaseKey").value);
+        $("#loginSupabaseUrl").value = state.cloud.url;
+        $("#loginSupabaseKey").value = state.cloud.key;
+        setSupabaseStatus(state.cloud.enabled ? "接続設定を保存しました。" : "未接続");
+        if (state.cloud.enabled && state.data) await pushTeamToSupabase(state.team, state.data, state.passwordHash);
+      }
+      async function pullCurrentTeam() {
+        const data = await pullTeamFromSupabase(state.team, state.passwordHash);
+        state.data = data;
+        persist(false);
+        renderAll();
+        setSupabaseStatus("クラウドから読み込みました。", "ok");
+      }
+      function inviteToken() {
+        const bytes = new Uint8Array(18);
+        crypto.getRandomValues(bytes);
+        return [...bytes].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+      }
+      function setInviteStatus(message, tone = "") {
+        const status = $("#inviteStatus");
+        if (!status) return;
+        status.textContent = message;
+        status.className = `status ${tone}`.trim();
+      }
+      function inviteUrl(token) {
+        const base = publicAppUrl();
+        const url = new URL(base);
+        url.search = "";
+        url.hash = "";
+        url.searchParams.set("vnp_invite", token);
+        url.searchParams.set("team", state.team);
+        url.searchParams.set("sb_url", state.cloud.url);
+        url.searchParams.set("sb_key", state.cloud.key);
+        return url.toString();
+      }
+      function publicAppUrl() {
+        const value = ($("#publicAppUrl")?.value || localStorage.getItem(publicUrlKey) || "").trim();
+        if (value) {
+          const url = new URL(value);
+          localStorage.setItem(publicUrlKey, url.toString());
+          return url.toString();
+        }
+        if (location.protocol === "file:" || location.hostname === "127.0.0.1" || location.hostname === "localhost") {
+          throw new Error("本番共有用の公開アプリURLを入力してください。ローカルURLは他の人が開けません。");
+        }
+        return location.href;
+      }
+      async function createInviteLink() {
+        if (!supabaseReady()) throw new Error("先にSupabase接続を保存してください。");
+        await pushTeamToSupabase(state.team, state.data, state.passwordHash);
+        const token = inviteToken();
+        const days = Number($("#inviteDays").value);
+        const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
+        const invite = {
+          token,
+          team_slug: state.team,
+          team_name: state.data.teamName,
+          role: $("#inviteRole").value,
+          expires_at: expiresAt,
+          created_at: new Date().toISOString(),
+        };
+        await supabaseRequest(supabaseInviteTable, {
+          method: "POST",
+          headers: { Prefer: "return=minimal" },
+          body: JSON.stringify(invite),
+        });
+        $("#shareText").value = inviteUrl(token);
+        setInviteStatus(`招待リンクを作成しました。有効期限: ${new Date(expiresAt).toLocaleDateString()}`, "ok");
+      }
+      async function loadInviteFromUrl() {
+        const params = new URLSearchParams(location.search);
+        const token = params.get("vnp_invite");
+        if (!token) return;
+        saveSupabaseConfig(params.get("sb_url") || "", params.get("sb_key") || "");
+        $("#loginSupabaseUrl").value = state.cloud.url;
+        $("#loginSupabaseKey").value = state.cloud.key;
+        if (!supabaseReady()) {
+          $("#loginMessage").textContent = "招待リンクにSupabase設定がありません。";
+          return;
+        }
+        try {
+          const rows = await supabaseRequest(`${supabaseInviteTable}?token=eq.${encodeURIComponent(token)}&select=*`);
+          const invite = rows[0];
+          if (!invite) throw new Error("招待リンクが見つかりません。");
+          if (new Date(invite.expires_at).getTime() < Date.now()) throw new Error("招待リンクの有効期限が切れています。");
+          state.pendingInvite = invite;
+          $("#loginTeam").value = invite.team_name || invite.team_slug;
+          $("#loginPassword").required = false;
+          $("#loginPassword").placeholder = "招待リンクでは不要";
+          $("#loginMessage").style.color = "var(--green-dark)";
+          $("#loginMessage").textContent = "招待リンクを読み込みました。このまま「はじめる」を押してください。";
+        } catch (error) {
+          $("#loginMessage").textContent = error.message;
+        }
+      }
+      function normalizeNote(note) {
+        const normalized = { ...note };
+        const scale = note.scoreScale === 100 ? 100 : 5;
+        scoreFields.forEach((name) => normalized[name] = scale === 100 ? clamp(normalized[name]) : clamp(Number(normalized[name]) * 20));
+        normalized.scoreScale = 100;
+        if (!normalized.playerId && state.data?.players?.[0]) normalized.playerId = state.data.players[0].id;
+        return normalized;
+      }
+
+      function initFields() {
+        ["noteId","playerSelect","date","type","position","condition","serve","receive","set","spike","block","good","issue","next","coachComment","tags"].forEach((id) => fields[id] = $(`#${id}`));
+      }
+      function bootApp() {
+        $("#loginScreen").classList.add("hidden");
+        $("#app").classList.remove("hidden");
+        $("#teamPill").textContent = state.data.teamName;
+        initFields();
+        bindAppEvents();
+        resetForm();
+        renderAll();
+      }
+      function bindAppEvents() {
+        if (window.__volleyBound) return;
+        window.__volleyBound = true;
+        $$(".tab").forEach((button) => button.addEventListener("click", () => showView(button.dataset.view)));
+        $("#logoutButton").addEventListener("click", () => location.reload());
+        $("#noteForm").addEventListener("submit", saveNote);
+        $("#resetForm").addEventListener("click", resetForm);
+        $("#sampleButton").addEventListener("click", fillSample);
+        $("#search").addEventListener("input", renderNotes);
+        $("#filterType").addEventListener("change", renderNotes);
+        scoreFields.forEach((name) => fields[name].addEventListener("input", syncScores));
+        $("#playerForm").addEventListener("submit", savePlayer);
+        $("#prevMonth").addEventListener("click", () => moveMonth(-1));
+        $("#nextMonth").addEventListener("click", () => moveMonth(1));
+        $("#chartPlayer").addEventListener("change", drawChart);
+        $("#csvButton").addEventListener("click", exportCsv);
+        $("#pdfButton").addEventListener("click", () => window.print());
+        $("#backupButton").addEventListener("click", exportBackup);
+        $("#restoreFile").addEventListener("change", restoreBackup);
+        $("#copyShareButton").addEventListener("click", copyShare);
+        $("#createInviteButton").addEventListener("click", () => createInviteLink().catch((error) => setInviteStatus(error.message, "error")));
+        $("#saveSupabaseButton").addEventListener("click", () => saveSupabaseFromForm().catch((error) => setSupabaseStatus(error.message, "error")));
+        $("#pullSupabaseButton").addEventListener("click", () => pullCurrentTeam().catch((error) => setSupabaseStatus(error.message, "error")));
+        $("#pushSupabaseButton").addEventListener("click", () => pushTeamToSupabase(state.team, state.data, state.passwordHash).catch((error) => setSupabaseStatus(error.message, "error")));
+        $("#installButton").addEventListener("click", installApp);
+        $("#checkoutButton").addEventListener("click", () => startCheckout().catch((error) => setBillingStatus(error.message, "error")));
+        $("#portalButton").addEventListener("click", () => openBillingPortal().catch((error) => setBillingStatus(error.message, "error")));
+      }
+      function showView(id) {
+        $$(".tab").forEach((button) => button.classList.toggle("active", button.dataset.view === id));
+        $$(".view").forEach((view) => view.classList.toggle("active", view.id === id));
+        if (id === "calendar") renderCalendar();
+        if (id === "charts") drawChart();
+        if (id === "share") renderShare();
+        if (id === "billing") renderBilling();
+      }
+
+      $("#loginForm").addEventListener("submit", (event) => {
+        event.preventDefault();
+        (async () => {
+          $("#loginMessage").textContent = "";
+          saveSupabaseConfig($("#loginSupabaseUrl").value, $("#loginSupabaseKey").value);
+          const result = state.pendingInvite && !$("#loginPassword").value
+            ? pullTeamByInvite(state.pendingInvite)
+            : loadTeam($("#loginTeam").value, $("#loginPassword").value);
+          const resolved = await result;
+          state.team = resolved.team;
+          state.data = resolved.data;
+          state.passwordHash = resolved.passwordHash;
+          bootApp();
+        })().catch((error) => {
+          $("#loginMessage").textContent = error.message;
+        });
+      });
+      $("#loginSupabaseUrl").value = state.cloud.url;
+      $("#loginSupabaseKey").value = state.cloud.key;
+      loadInviteFromUrl();
+
+      if ("serviceWorker" in navigator && location.protocol !== "file:") {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("sw.js").catch(() => {});
+        });
+      }
+      window.addEventListener("beforeinstallprompt", (event) => {
+        event.preventDefault();
+        deferredInstallPrompt = event;
+        $("#installButton")?.classList.remove("hidden");
+      });
+      async function installApp() {
+        if (!deferredInstallPrompt) {
+          alert("このブラウザでは、メニューから「アプリをインストール」または「ホーム画面に追加」を選んでください。");
+          return;
+        }
+        deferredInstallPrompt.prompt();
+        await deferredInstallPrompt.userChoice;
+        deferredInstallPrompt = null;
+        $("#installButton")?.classList.add("hidden");
+      }
+
+      function renderAll() {
+        renderPlayerSelects();
+        renderSummary();
+        renderNotes();
+        renderPlayers();
+        renderCalendar();
+        drawChart();
+        renderShare();
+        renderBilling();
+      }
+      function renderPlayerSelects() {
+        const options = state.data.players.map((p) => `<option value="${p.id}">${escapeHtml(p.name)}${p.number ? ` #${escapeHtml(p.number)}` : ""}</option>`).join("");
+        $("#playerSelect").innerHTML = options;
+        $("#chartPlayer").innerHTML = `<option value="all">チーム平均</option>${options}`;
+      }
+      function renderSummary() {
+        $("#countMetric").textContent = state.data.notes.length;
+        $("#avgMetric").textContent = state.data.notes.length ? `${avg(state.data.notes.map(score)).toFixed(0)}%` : "-";
+        $("#playerMetric").textContent = state.data.players.length;
+      }
+      function filteredNotes() {
+        const q = $("#search").value.trim().toLowerCase();
+        const type = $("#filterType").value;
+        return state.data.notes
+          .filter((note) => type === "all" || note.type === type)
+          .filter((note) => {
+            if (!q) return true;
+            return [playerName(note.playerId), note.date, note.type, note.position, note.good, note.issue, note.next, note.coachComment, note.tags.join(" ")]
+              .join(" ").toLowerCase().includes(q);
+          })
+          .sort((a, b) => b.date.localeCompare(a.date) || b.updatedAt.localeCompare(a.updatedAt));
+      }
+      function renderNotes() {
+        const list = $("#noteList");
+        list.replaceChildren();
+        const notes = filteredNotes();
+        if (!notes.length) {
+          list.innerHTML = `<div class="empty">まだ記録がありません。選手を選んで最初の振り返りを保存しましょう。</div>`;
+          renderSummary();
+          return;
+        }
+        notes.forEach((note) => list.append(noteCard(note)));
+        renderSummary();
+      }
+      function noteCard(note) {
+        const card = document.createElement("article");
+        card.className = "card";
+        card.innerHTML = `
+          <div class="row">
+            <div><time>${escapeHtml(note.date)}</time><h3>${escapeHtml(playerName(note.playerId))} / ${escapeHtml(note.type)} / ${escapeHtml(note.position)}</h3></div>
+            <div class="row no-print">
+              <button class="icon edit" type="button" title="編集">✎</button>
+              <button class="icon danger delete" type="button" title="削除">×</button>
+            </div>
+          </div>
+          <div class="chips">
+            <span class="chip alt">総合 ${score(note).toFixed(0)}%</span>
+            ${scoreFields.map((name) => `<span class="chip">${scoreLabels[name]} ${note[name]}%</span>`).join("")}
+          </div>
+          ${block("できたこと", note.good)}
+          ${block("課題", note.issue)}
+          ${block("次に試すこと", note.next)}
+          ${block("コーチコメント", note.coachComment)}
+          <div class="chips">${note.tags.map((tag) => `<span class="chip">#${escapeHtml(tag)}</span>`).join("")}</div>
+        `;
+        card.querySelector(".edit").addEventListener("click", () => editNote(note));
+        card.querySelector(".delete").addEventListener("click", () => deleteNote(note.id));
+        return card;
+      }
+      function block(title, body) {
+        if (!body) return "";
+        return `<div class="note-block"><div class="note-title">${escapeHtml(title)}</div><div class="note-body">${escapeHtml(body)}</div></div>`;
+      }
+
+      function readNote() {
+        return {
+          id: fields.noteId.value || makeId("note"),
+          playerId: fields.playerSelect.value,
+          date: fields.date.value,
+          type: fields.type.value,
+          position: fields.position.value,
+          condition: clamp(fields.condition.value),
+          serve: clamp(fields.serve.value),
+          receive: clamp(fields.receive.value),
+          set: clamp(fields.set.value),
+          spike: clamp(fields.spike.value),
+          block: clamp(fields.block.value),
+          scoreScale: 100,
+          good: fields.good.value.trim(),
+          issue: fields.issue.value.trim(),
+          next: fields.next.value.trim(),
+          coachComment: fields.coachComment.value.trim(),
+          tags: fields.tags.value.split(",").map((tag) => tag.trim()).filter(Boolean),
+          updatedAt: new Date().toISOString(),
+        };
+      }
+      function saveNote(event) {
+        event.preventDefault();
+        const note = readNote();
+        const index = state.data.notes.findIndex((item) => item.id === note.id);
+        if (index >= 0) state.data.notes[index] = note;
+        else state.data.notes.push(note);
+        persist();
+        resetForm();
+        renderAll();
+      }
+      function editNote(note) {
+        Object.entries(fields).forEach(([id, field]) => {
+          const key = id === "noteId" ? "id" : id === "playerSelect" ? "playerId" : id;
+          if (id === "tags") field.value = note.tags.join(", ");
+          else if (note[key] !== undefined) field.value = note[key];
+        });
+        syncScores();
+        showView("dashboard");
+        window.scrollTo({ top: $("#dashboard").offsetTop - 10, behavior: "smooth" });
+      }
+      function deleteNote(id) {
+        if (!confirm("この記録を削除しますか？")) return;
+        state.data.notes = state.data.notes.filter((note) => note.id !== id);
+        persist();
+        renderAll();
+      }
+      function resetForm() {
+        $("#noteForm").reset();
+        fields.noteId.value = "";
+        fields.date.value = today();
+        scoreFields.forEach((name) => fields[name].value = 60);
+        syncScores();
+      }
+      function syncScores() {
+        scoreFields.forEach((name) => $(`#${name}Text`).textContent = `${fields[name].value}%`);
+      }
+      function fillSample() {
+        if (!state.data.players.length) return;
+        fields.playerSelect.value = state.data.players[0].id;
+        fields.date.value = today();
+        fields.type.value = "練習";
+        fields.position.value = state.data.players[0].position || "OH";
+        Object.entries({ condition: 82, serve: 78, receive: 66, set: 60, spike: 84, block: 48 }).forEach(([k, v]) => fields[k].value = v);
+        fields.good.value = "サーブの狙いを決めてから打てた。スパイクも最後まで腕を振れた。";
+        fields.issue.value = "強いサーブカットで体が後ろに流れた。";
+        fields.next.value = "レシーブ前に一歩目を小さくして、面を先に作る。";
+        fields.coachComment.value = "次回は構えの低さと声かけを確認しよう。";
+        fields.tags.value = "サーブ, レシーブ, フォーム";
+        syncScores();
+      }
+
+      function savePlayer(event) {
+        event.preventDefault();
+        state.data.players.push({
+          id: makeId("player"),
+          name: $("#playerName").value.trim(),
+          number: $("#playerNumber").value.trim(),
+          position: $("#playerPosition").value,
+        });
+        $("#playerForm").reset();
+        persist();
+        renderAll();
+      }
+      function renderPlayers() {
+        $("#playerCountPill").textContent = `${state.data.players.length}人`;
+        const cards = $("#playerCards");
+        cards.replaceChildren();
+        state.data.players.forEach((player) => {
+          const playerNotes = state.data.notes.filter((note) => note.playerId === player.id);
+          const card = document.createElement("article");
+          card.className = "card";
+          card.innerHTML = `
+            <div class="row"><h3>${escapeHtml(player.name)}</h3><button class="icon danger" type="button">×</button></div>
+            <div class="chips">
+              <span class="chip alt">#${escapeHtml(player.number || "-")}</span>
+              <span class="chip">${escapeHtml(player.position)}</span>
+              <span class="chip">${playerNotes.length}記録</span>
+              <span class="chip">平均 ${playerNotes.length ? avg(playerNotes.map(score)).toFixed(0) : "-"}%</span>
+            </div>
+          `;
+          card.querySelector("button").addEventListener("click", () => deletePlayer(player.id));
+          cards.append(card);
+        });
+      }
+      function deletePlayer(id) {
+        if (state.data.players.length <= 1) return alert("選手は1人以上必要です。");
+        if (!confirm("選手とその記録を削除しますか？")) return;
+        state.data.players = state.data.players.filter((player) => player.id !== id);
+        state.data.notes = state.data.notes.filter((note) => note.playerId !== id);
+        persist();
+        renderAll();
+      }
+
+      function moveMonth(delta) {
+        state.calendarDate.setMonth(state.calendarDate.getMonth() + delta);
+        renderCalendar();
+      }
+      function renderCalendar() {
+        const grid = $("#calendarGrid");
+        grid.replaceChildren();
+        const year = state.calendarDate.getFullYear();
+        const month = state.calendarDate.getMonth();
+        $("#calendarTitle").textContent = `${year}年 ${month + 1}月`;
+        ["日","月","火","水","木","金","土"].forEach((name) => {
+          const el = document.createElement("div");
+          el.className = "day-name";
+          el.textContent = name;
+          grid.append(el);
+        });
+        const start = new Date(year, month, 1);
+        const first = new Date(year, month, 1 - start.getDay());
+        for (let i = 0; i < 42; i++) {
+          const date = new Date(first);
+          date.setDate(first.getDate() + i);
+          const iso = date.toISOString().slice(0, 10);
+          const notes = state.data.notes.filter((note) => note.date === iso);
+          const day = document.createElement("button");
+          day.type = "button";
+          day.className = `day ${date.getMonth() === month ? "" : "muted"}`;
+          day.innerHTML = `<strong>${date.getDate()}</strong><div>${notes.slice(0, 3).map((note) => `<span class="dot ${note.type === "試合" ? "game" : ""}"></span>`).join("")}</div>`;
+          day.addEventListener("click", () => {
+            state.selectedCalendarDate = iso;
+            renderCalendarList();
+          });
+          grid.append(day);
+        }
+        renderCalendarList();
+      }
+      function renderCalendarList() {
+        const list = $("#calendarList");
+        list.replaceChildren();
+        const notes = state.data.notes.filter((note) => note.date === state.selectedCalendarDate);
+        if (!notes.length) {
+          list.innerHTML = `<div class="empty">${state.selectedCalendarDate} の記録はありません。</div>`;
+          return;
+        }
+        notes.forEach((note) => list.append(noteCard(note)));
+      }
+
+      function drawChart() {
+        const canvas = $("#growthChart");
+        if (!canvas) return;
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        const playerId = $("#chartPlayer")?.value || "all";
+        const notes = state.data.notes
+          .filter((note) => playerId === "all" || note.playerId === playerId)
+          .sort((a, b) => a.date.localeCompare(b.date))
+          .slice(-12);
+        const pad = 46;
+        ctx.strokeStyle = "#d7ddd8";
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 5; i++) {
+          const y = pad + ((canvas.height - pad * 2) * i / 5);
+          ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(canvas.width - pad, y); ctx.stroke();
+          ctx.fillStyle = "#65747d"; ctx.fillText(`${100 - i * 20}%`, 8, y + 4);
+        }
+        if (!notes.length) {
+          ctx.fillStyle = "#65747d";
+          ctx.font = "18px Segoe UI";
+          ctx.fillText("グラフに表示する記録がありません。", pad, canvas.height / 2);
+          return;
+        }
+        const colors = { serve: "#21776d", receive: "#2d6f9f", spike: "#b94d3e" };
+        Object.entries(colors).forEach(([field, color]) => {
+          ctx.beginPath();
+          notes.forEach((note, index) => {
+            const x = pad + (canvas.width - pad * 2) * (notes.length === 1 ? 0 : index / (notes.length - 1));
+            const y = canvas.height - pad - (canvas.height - pad * 2) * (note[field] / 100);
+            if (index === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+          });
+          ctx.strokeStyle = color; ctx.lineWidth = 3; ctx.stroke();
+          notes.forEach((note, index) => {
+            const x = pad + (canvas.width - pad * 2) * (notes.length === 1 ? 0 : index / (notes.length - 1));
+            const y = canvas.height - pad - (canvas.height - pad * 2) * (note[field] / 100);
+            ctx.fillStyle = color; ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2); ctx.fill();
+          });
+        });
+        ctx.fillStyle = "#16242b"; ctx.font = "14px Segoe UI";
+        ctx.fillText("サーブ", pad, 24); ctx.fillText("レシーブ", pad + 70, 24); ctx.fillText("スパイク", pad + 158, 24);
+        ctx.fillStyle = colors.serve; ctx.fillRect(pad - 18, 15, 12, 12);
+        ctx.fillStyle = colors.receive; ctx.fillRect(pad + 52, 15, 12, 12);
+        ctx.fillStyle = colors.spike; ctx.fillRect(pad + 140, 15, 12, 12);
+      }
+
+      function exportCsv() {
+        const header = ["日付","選手","種別","ポジション","体調","サーブ","レシーブ","トス","スパイク","ブロック","できたこと","課題","次に試すこと","コーチコメント","タグ"];
+        const rows = state.data.notes.map((n) => [n.date, playerName(n.playerId), n.type, n.position, n.condition, n.serve, n.receive, n.set, n.spike, n.block, n.good, n.issue, n.next, n.coachComment, n.tags.join(" / ")]);
+        const csv = [header, ...rows].map((row) => row.map((cell) => `"${String(cell ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
+        download(`volley-note-${today()}.csv`, "\uFEFF" + csv, "text/csv;charset=utf-8");
+      }
+      function exportBackup() {
+        download(`volley-note-backup-${today()}.json`, JSON.stringify(state.data, null, 2), "application/json");
+      }
+      function restoreBackup(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          try {
+            const data = JSON.parse(reader.result);
+            if (!data.players || !data.notes) throw new Error("バックアップ形式が違います。");
+            state.data = data;
+            persist();
+            renderAll();
+            alert("バックアップを復元しました。");
+          } catch (error) {
+            alert(error.message);
+          }
+        };
+        reader.readAsText(file);
+      }
+      function renderShare() {
+        $("#publicAppUrl").value = localStorage.getItem(publicUrlKey) || (location.protocol === "https:" ? location.origin + location.pathname : "");
+        if (!$("#shareText").value) {
+          $("#shareText").value = supabaseReady() ? "招待リンクを作成してください。" : "Supabase接続を保存すると招待リンクを作成できます。";
+        }
+        $("#supabaseUrl").value = state.cloud.url;
+        $("#supabaseKey").value = state.cloud.key;
+        setSupabaseStatus(state.cloud.enabled ? "接続設定あり。保存時に自動同期します。" : "未接続");
+        setInviteStatus(state.cloud.enabled ? "招待リンクを作成できます。" : "Supabase接続後に作成できます。");
+      }
+      async function copyShare() {
+        try {
+          await navigator.clipboard.writeText($("#shareText").value);
+          alert("招待リンクをコピーしました。");
+        } catch {
+          $("#shareText").select();
+          document.execCommand("copy");
+          alert("招待リンクをコピーしました。");
+        }
+      }
+      function setBillingStatus(message, tone = "") {
+        const status = $("#billingStatus");
+        if (!status) return;
+        status.textContent = message;
+        status.className = `status ${tone}`.trim();
+      }
+      function renderBilling() {
+        const params = new URLSearchParams(location.search);
+        if (params.get("checkout") === "success") {
+          setBillingStatus("支払いが完了しました。契約状態はStripe webhookで反映されます。", "ok");
+          return;
+        }
+        if (params.get("checkout") === "cancel") {
+          setBillingStatus("支払いがキャンセルされました。", "error");
+          return;
+        }
+        setBillingStatus("有料プランを開始できます。");
+      }
+      async function startCheckout() {
+        if (!state.team || !state.data?.teamName) throw new Error("先にチームへログインしてください。");
+        const response = await fetch("/api/create-checkout-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ teamSlug: state.team, teamName: state.data.teamName }),
+        });
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error || "Checkoutを開始できませんでした。");
+        location.href = payload.url;
+      }
+      async function openBillingPortal() {
+        if (!state.team) throw new Error("先にチームへログインしてください。");
+        const response = await fetch("/api/create-portal-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ teamSlug: state.team }),
+        });
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error || "契約管理を開けませんでした。");
+        location.href = payload.url;
+      }
+    </script>
+  </body>
+</html>
